@@ -1,0 +1,13 @@
+{
+  "name": "mvof-gestion-alimentaria",
+  "version": "3.0.0",
+  "description": "MVOF · Sistema de gestión alimentaria — Biblioteca Nutricional INTA, auth y CRUD",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": ["mvof","minutas","recetas","casinos","supabase","inta","nutricion"],
+  "author": "Miguel Vallejos Morales",
+  "license": "UNLICENSED"
+}

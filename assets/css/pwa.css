@@ -1,0 +1,11 @@
+/* MVOF · PWA install button */
+.pwa-install-btn{
+  position:fixed;bottom:24px;left:24px;z-index:99;padding:12px 18px;
+  background:linear-gradient(180deg,var(--sage-500),var(--sage-600));color:#fff;border:none;
+  border-radius:999px;box-shadow:0 10px 24px rgba(91,124,110,.42);font-weight:650;font-size:13px;
+  cursor:pointer;display:none;align-items:center;gap:8px;font-family:inherit;transition:all .2s var(--ease);
+}
+.pwa-install-btn.show{display:flex;animation:rise .4s var(--spring)}
+.pwa-install-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(91,124,110,.5)}
+@media print{.pwa-install-btn{display:none !important}}
+@media (max-width:600px){.pwa-install-btn{bottom:16px;left:16px;padding:10px 14px;font-size:12px}}

@@ -1,0 +1,35 @@
+/* ============================================================
+   MVOF · Login moderno (paleta sage)
+   ============================================================ */
+.auth-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:
+    radial-gradient(1000px 600px at 15% 10%, rgba(91,124,110,.16), transparent 55%),
+    radial-gradient(900px 620px at 100% 100%, rgba(61,84,73,.18), transparent 55%),
+    linear-gradient(135deg,#F3F7F4 0%, #EAF1ED 55%, #E1EAE4 100%);
+  display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s var(--ease)
+}
+.auth-overlay.hidden{display:none}
+.auth-card{
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:var(--r-xl);padding:38px 34px;width:410px;max-width:93vw;
+  box-shadow:0 30px 70px rgba(20,28,24,.18),0 0 0 1px rgba(91,124,110,.06);
+  animation:pop .4s var(--spring)
+}
+.auth-logo{width:60px;height:60px;display:block;margin:0 auto 16px;border-radius:16px;
+  box-shadow:0 10px 26px rgba(91,124,110,.32)}
+.auth-title{font-size:25px;font-weight:750;text-align:center;color:var(--sage-700);letter-spacing:-.02em;margin-bottom:6px}
+.auth-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:26px}
+.auth-field{margin-bottom:14px}
+.auth-field label{font-size:11px;color:var(--muted);font-weight:650;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:block}
+.auth-actions{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.auth-error{padding:11px 14px;background:var(--danger-bg);border-left:3px solid var(--danger);border-radius:8px;
+  color:#8F3B36;font-size:12.5px;margin-bottom:14px;display:none}
+.auth-error.show{display:block;animation:rise .2s var(--ease)}
+.auth-credentials{margin-top:24px;padding:15px 16px;background:var(--sage-50);border:1px solid var(--line-2);border-radius:var(--r)}
+.auth-credentials h4{color:var(--sage-700);margin-bottom:9px;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:750}
+.auth-credentials table{width:100%;font-size:11px}
+.auth-credentials td{padding:3px 6px;white-space:nowrap;color:var(--ink-2)}
+.auth-credentials code{font-family:ui-monospace,'SF Mono',monospace;color:var(--sage-700);font-weight:650;
+  background:#fff;padding:2px 7px;border-radius:6px;border:1px solid var(--line-2)}

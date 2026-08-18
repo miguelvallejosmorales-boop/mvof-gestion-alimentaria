@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<title>MVOF · Gestión Alimentaria</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MVOF">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="msapplication-TileColor" content="#5B7C6E">
+<meta name="msapplication-TileImage" content="/assets/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/base.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/layout.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/components.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/badge.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/modules.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/auth.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/pwa.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/barcode.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/print.css?v=3.0.0">
+<link rel="stylesheet" href="assets/css/responsive.css?v=3.0.0">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+</head>
+<body>
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-card">
+    <img src="assets/img/logo.svg" alt="MVOF" class="auth-logo"/>
+    <h1 class="auth-title">MVOF</h1>
+    <p class="auth-sub">Sistema de Gestión Alimentaria · Inicia sesión</p>
+    <div class="auth-error" id="login-error"></div>
+    <div class="auth-field"><label>Usuario</label><input id="login-user" type="text" placeholder="ej: admin" autocomplete="username"/></div>
+    <div class="auth-field"><label>Contraseña</label><input id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
+    <div class="auth-actions"><button class="btn btn-primary btn-block btn-lg" id="login-btn" onclick="doLogin()">Iniciar sesión</button></div>
+    <div class="auth-credentials">
+      <h4>Usuarios demo</h4>
+      <table>
+        <tr><td><code>admin</code></td><td>/</td><td><code>admin123</code></td><td>Administrador Casino</td></tr>
+        <tr><td><code>nutri_prod</code></td><td>/</td><td><code>nutri123</code></td><td>Nutricionista Producción</td></tr>
+        <tr><td><code>nutri_clin</code></td><td>/</td><td><code>clinica123</code></td><td>Nutricionista Clínica</td></tr>
+        <tr><td><code>cocina</code></td><td>/</td><td><code>cocina123</code></td><td>Cocina</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="hamb" onclick="toggleSidebar()">☰</button>
+    <div class="brand"><img src="assets/img/logo.svg" alt="MVOF"/><div class="brand-text"><b>MVOF</b><small>Gestión Alimentaria</small></div></div>
+    <span id="badge" class="status-badge">● Sin conectar</span>
+  </div>
+  <div class="hdr-tools">
+    <button class="btn btn-ghost" onclick="window.print()">📄 PDF</button>
+    <button class="btn btn-ghost btn-icon" onclick="cargarTodo()" title="Recargar">🔄</button>
+    <div id="user-chip-container"></div>
+  </div>
+</header>
+<div class="layout">
+  <aside id="sidebar">
+    <div class="sb-brand"><img src="assets/img/logo.svg" alt="MVOF"/><div class="txt"><b>MVOF</b><small>Gestión Alimentaria</small></div></div>
+    <nav class="nav">
+      <div class="nav-item active" data-mod="minutas" onclick="irA('minutas')"><span class="ic">📅</span> Minutas</div>
+      <div class="nav-item" data-mod="recetas" onclick="irA('recetas')"><span class="ic">🍳</span> Recetas</div>
+      <div class="nav-item" data-mod="dashboard" onclick="irA('dashboard')"><span class="ic">📊</span> Dashboard</div>
+      <div class="nav-item" data-mod="compras" onclick="irA('compras')"><span class="ic">🛒</span> Lista compras</div>
+      <div class="nav-item" data-mod="inventario" onclick="irA('inventario')"><span class="ic">📦</span> Inventario</div>
+      <div class="nav-item" data-mod="usuarios" onclick="irA('usuarios')"><span class="ic">👥</span> Usuarios</div>
+      <div class="nav-item" data-mod="auditoria" onclick="irA('auditoria')"><span class="ic">📋</span> Auditoría</div>
+      <div class="nav-item" data-mod="config" onclick="irA('config')"><span class="ic">⚙️</span> Configuración</div>
+    </nav>
+    <div class="sb-footer">© 2026 MVOF<br>v3.0</div>
+  </aside>
+  <main>
+  <section class="module active" id="mod-minutas">
+    <div class="toolbar">
+      <div><label>Casino</label><select id="casinoSel"></select></div>
+      <div><label>Nombre</label><input id="nombreMinuta" type="text" placeholder="Casino Norte - Sem 1"/></div>
+      <div><label>Mes</label><input id="mes" type="text" placeholder="FEBRERO"/></div>
+      <div><label>Semana (lunes)</label><input id="fechaInicio" type="date"/></div>
+      <div style="flex:1"></div>
+      <button class="btn btn-soft" data-perm="minutas.crear" onclick="nuevaSemana()">＋ Nueva</button>
+      <button class="btn btn-primary" data-perm="minutas.crear" onclick="guardarMinutaDB()">💾 Guardar</button>
+      <button class="btn btn-soft" onclick="cargarMinutaDB()">📂 Cargar</button>
+      <button class="btn btn-ghost" data-perm="minutas.crear" onclick="limpiarMinuta()">🗑️</button>
+    </div>
+    <div class="loader" id="loader-min"><div class="spin"></div> Cargando datos...</div>
+    <div class="minuta"><table><thead><tr id="thead-row"><th>Categoría</th></tr></thead><tbody id="tbody-min"></tbody></table></div>
+    <div class="aderezos"><h3>Aderezos disponibles</h3><div id="aderezos-list"></div></div>
+  </section>
+  <section class="module" id="mod-recetas">
+    <div class="tabs">
+      <div class="tab active" data-sub="platos" onclick="cambiarSubTab('platos')">📋 Platos</div>
+      <div class="tab" data-sub="ingredientes" onclick="cambiarSubTab('ingredientes')">🥕 Ingredientes</div>
+    </div>
+    <div id="sub-platos">
+      <div class="toolbar">
+        <select id="filtroCat"><option value="">Todas las categorías</option></select>
+        <input type="search" id="buscarPlato" placeholder="🔍 Buscar receta..."/>
+        <button class="btn btn-primary" data-perm="recetas.crear" onclick="abrirDrawerPlato()">＋ Nueva receta</button>
+        <div class="stats" id="statsPlatos">— platos</div>
+      </div>
+      <div class="panel"><table><thead><tr><th>Nombre</th><th>Categoría</th><th>Kcal</th><th>Prot</th><th>Carb</th><th>GT</th><th></th></tr></thead><tbody id="tbl-platos"></tbody></table></div>
+    </div>
+    <div id="sub-ingredientes" class="hidden">
+      <div class="toolbar">
+        <input type="search" id="buscarIng" placeholder="🔍 Buscar ingrediente..."/>
+        <select id="filtroFuenteIng">
+          <option value="">Todos los orígenes</option>
+          <option value="INTA">🌿 INTA</option>
+          <option value="INTA_MATCH">✅ INTA (match)</option>
+          <option value="MANUAL">✍️ Propio</option>
+        </select>
+        <button class="btn btn-primary" data-perm="ingredientes.crear" onclick="abrirModalIng()">＋ Nuevo ingrediente</button>
+        <div class="stats" id="statsIng">— ingredientes</div>
+      </div>
+      <div class="panel"><table><thead><tr><th>Nombre</th><th>Origen</th><th>Unidad</th><th>Kcal/100</th><th>Prot/100</th><th>Carb/100</th><th>Grasa/100</th><th></th></tr></thead><tbody id="tbl-ing"></tbody></table></div>
+    </div>
+  </section>
+  <section class="module" id="mod-dashboard">
+    <div class="cards-grid" id="stats-cards"></div>
+    <div class="card card-pad" style="margin-bottom:14px"><h3 class="section-title">📊 Distribución por categoría</h3><div id="dist-cat"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div class="card card-pad"><h3 class="section-title">🔥 Top 10 más calóricos</h3><div id="top-cal"></div></div>
+      <div class="card card-pad"><h3 class="section-title">💪 Top 10 más proteicos</h3><div id="top-prot"></div></div>
+    </div>
+    <div class="card card-pad"><h3 class="section-title">🕐 Últimas minutas guardadas</h3><div id="ultimas-min"></div></div>
+  </section>
+  <section class="module" id="mod-compras">
+    <div class="toolbar">
+      <div style="flex:1"><label>Minuta</label><select id="compraMinuta"></select></div>
+      <button class="btn btn-primary" onclick="cargarPlatosCompras()">📋 Cargar platos</button>
+    </div>
+    <div class="card card-pad" id="box-raciones" style="margin-bottom:16px">
+      <h3 class="paso-titulo"><span class="paso-num">1</span> Ajusta las raciones por plato</h3>
+      <div class="panel"><table><thead><tr><th>Plato</th><th>Categoría</th><th>Días</th><th style="width:100px">Raciones</th><th></th></tr></thead><tbody id="tbl-raciones"><tr><td colspan="5" class="empty">Selecciona una minuta y haz clic en "Cargar platos"</td></tr></tbody></table></div>
+      <div class="raciones-actions">
+        <div class="stats" id="statsRaciones" style="margin-right:auto"></div>
+        <button class="btn btn-primary btn-lg" data-perm="compras.generar" onclick="generarLista()">🛒 Generar lista de compras</button>
+      </div>
+    </div>
+    <div class="card card-pad">
+      <h3 class="paso-titulo"><span class="paso-num">2</span> Lista consolidada de compras<span class="stats" id="statsCompra" style="margin-left:auto"></span></h3>
+      <div class="panel"><table><thead><tr><th>Ingrediente</th><th>Unidad</th><th>Cantidad total</th></tr></thead><tbody id="tbl-compras"><tr><td colspan="3" class="empty">Primero carga los platos y ajusta las raciones</td></tr></tbody></table></div>
+    </div>
+  </section>
+<section class="module" id="mod-inventario">
+  <div class="toolbar">
+    <div><label>Bodega</label><select id="inv-bodega-sel" onchange="cambiarBodegaInv()"></select></div>
+    <div style="flex:1"></div>
+    <button class="btn btn-primary" data-perm="inventario.ingresar" onclick="abrirModalIngreso()">📥 Nuevo ingreso</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" data-subinv="stock" onclick="renderTabInventario('stock')">📋 Stock actual</div>
+    <div class="tab" data-subinv="dashboard" onclick="renderTabInventario('dashboard')">📊 Dashboard</div>
+    <div class="tab" data-subinv="movimientos" onclick="renderTabInventario('movimientos')">📜 Movimientos</div>
+  </div>
+  <div id="inv-tab-stock">
+    <div class="toolbar">
+      <input type="search" id="inv-buscar" placeholder="🔍 Buscar producto..."/>
+      <div class="stats" id="inv-stock-stats">— productos</div>
+    </div>
+    <div class="panel">
+      <table>
+        <thead><tr>
+          <th>Producto</th><th>Bodega</th><th>Cantidad</th><th>Stock mín</th>
+          <th>Ubicación</th><th>Vence</th><th>Estado</th><th></th>
+        </tr></thead>
+        <tbody id="tbl-inv-stock"><tr><td colspan="8" class="empty">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="inv-tab-dashboard" class="hidden">
+    <div class="cards-grid" id="inv-cards"></div>
+  </div>
+  <div id="inv-tab-movimientos" class="hidden">
+    <div class="toolbar">
+      <div class="stats" id="inv-mov-stats">— movimientos</div>
+    </div>
+    <div class="panel">
+      <table>
+        <thead><tr>
+          <th>Fecha</th><th>Tipo</th><th>Producto</th><th>Bodega</th>
+          <th>Cantidad</th><th>Motivo</th><th>Usuario</th><th>Detalle</th>
+        </tr></thead>
+        <tbody id="tbl-inv-mov"><tr><td colspan="8" class="empty">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+  <section class="module" id="mod-usuarios">
+    <div class="toolbar">
+      <input type="search" id="buscarUsuario" placeholder="🔍 Buscar usuario..."/>
+      <button class="btn btn-primary" onclick="abrirModalNuevoUsuario()">＋ Nuevo usuario</button>
+      <div class="stats" id="stats-usuarios">— usuarios</div>
+    </div>
+    <div class="panel"><table><thead><tr><th>Usuario</th><th>Email</th><th>Perfil</th><th>Casino</th><th>Estado</th><th>Último login</th><th></th></tr></thead><tbody id="tbl-usuarios"><tr><td colspan="7" class="empty">Cargando usuarios...</td></tr></tbody></table></div>
+  </section>
+  <section class="module" id="mod-auditoria">
+    <div class="toolbar">
+      <div><label>Desde</label><input id="audit-desde" type="date"/></div>
+      <div><label>Hasta</label><input id="audit-hasta" type="date"/></div>
+      <div><label>Acción</label>
+        <select id="audit-accion">
+          <option value="">Todas</option>
+          <option value="LOGIN">LOGIN</option>
+          <option value="LOGOUT">LOGOUT</option>
+          <option value="CREAR">CREAR</option>
+          <option value="EDITAR">EDITAR</option>
+          <option value="ELIMINAR">ELIMINAR</option>
+          <option value="GENERAR_LISTA">GENERAR_LISTA</option>
+        </select>
+      </div>
+      <button class="btn btn-soft" onclick="aplicarFiltrosAuditoria()">🔍 Aplicar</button>
+      <button class="btn btn-soft" onclick="limpiarFiltrosAuditoria()">🧹 Limpiar</button>
+      <input type="search" id="buscarAuditoria" placeholder="🔍 Buscar..."/>
+      <button class="btn btn-success" onclick="exportarCSVAuditoria()">📥 CSV</button>
+      <div class="stats" id="stats-auditoria">— registros</div>
+    </div>
+    <div class="panel"><table><thead><tr><th>Fecha</th><th>Usuario</th><th>Casino</th><th>Acción</th><th>Entidad</th><th>Descripción</th></tr></thead><tbody id="tbl-auditoria"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody></table></div>
+  </section>
+  <section class="module" id="mod-config">
+    <div class="card card-pad" style="max-width:580px">
+      <h2 class="section-title">⚙️ Configuración de Supabase</h2>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 18px">Las credenciales vienen <b>precargadas</b>. Solo cámbialas si quieres conectar a otra base de datos.</p>
+      <div class="field"><label>Supabase URL</label><input id="cfg-url" type="text" placeholder="https://xxxxx.supabase.co"/></div>
+      <div class="field"><label>Anon / publishable key</label><input id="cfg-key" type="text" placeholder="sb_publishable_..."/></div>
+      <div class="field"><label>Schema</label><input id="cfg-schema" type="text" value="minutas"/></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn btn-soft" onclick="probarConexion()">🧪 Probar conexión</button>
+        <button class="btn btn-primary" onclick="guardarConfig()">💾 Guardar</button>
+        <button class="btn btn-danger" onclick="resetConfig()">🗑️ Restaurar</button>
+      </div>
+    </div>
+  </section>
+  </main>
+</div>
+<div class="drawer-bg" id="drawerBg" onclick="cerrarDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header"><h2 id="drawerTitle">Nueva receta</h2><button class="btn btn-icon" onclick="cerrarDrawer()">✕</button></div>
+  <div class="drawer-body">
+    <div class="field"><label>Nombre *</label><input id="d-nombre" type="text"/></div>
+    <div class="grid2"><div class="field"><label>Categoría *</label><select id="d-cat"></select></div><div class="field"><label>Porciones</label><input id="d-porciones" type="number" min="1" value="1"/></div></div>
+    <div class="grid2"><div class="field"><label>Tiempo (min)</label><input id="d-tiempo" type="number" min="0"/></div><div class="field"><label>Tags (CSV)</label><input id="d-tags" type="text" placeholder="vegano, sin_gluten"/></div></div>
+    <div class="field"><label>Preparación</label><textarea id="d-prep" placeholder="Paso a paso..."></textarea></div>
+    <div class="ing-section">
+      <h3>🥕 Ingredientes</h3>
+      <div id="d-ing-lista"><div class="empty" style="padding:14px">Aún no hay ingredientes</div></div>
+      <div class="ing-add-row"><select id="d-ing-sel"><option value="">Selecciona ingrediente...</option></select><input id="d-ing-cant" type="number" step="0.001" placeholder="Cantidad"/><button class="btn btn-success btn-mini" onclick="agregarIngrediente()">＋</button></div>
+    </div>
+    <div class="totales-box">
+      <h4>📊 Totales en vivo</h4>
+      <div class="totales-grid"><div>Cal<b id="t-cal">0</b></div><div>Prot<b id="t-prot">0</b></div><div>Carb<b id="t-carb">0</b></div><div>GT<b id="t-gt">0</b></div></div>
+    </div>
+  </div>
+  <div class="drawer-footer"><button class="btn btn-soft" onclick="cerrarDrawer()">Cancelar</button><button class="btn btn-primary" onclick="guardarPlato()">💾 Guardar</button></div>
+</div>
+<div class="modal-bg" id="modalIng">
+  <div class="modal">
+    <h2 id="modalIngTitle">Nuevo ingrediente</h2>
+    <div class="sub">Valores nutricionales por cada 100 g/ml.</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button type="button" class="btn btn-soft" onclick="escanearManualmente()">🔢 Código manual</button>
+      <button type="button" class="btn btn-primary" onclick="escanearConCamara()">📷 Escanear</button>
+    </div>
+    <div class="field"><label>Nombre *</label><input id="i-nombre" type="text"/></div>
+    <div class="field"><label>Unidad</label><select id="i-unidad"><option value="gr">gramos (gr)</option><option value="ml">mililitros (ml)</option><option value="und">unidades (und)</option></select></div>
+    <div class="grid2"><div class="field"><label>Kcal por 100</label><input id="i-kcal" type="number" step="0.01"/></div><div class="field"><label>Proteína por 100</label><input id="i-prot" type="number" step="0.01"/></div></div>
+    <div class="grid2"><div class="field"><label>Carbohidratos por 100</label><input id="i-carb" type="number" step="0.01"/></div><div class="field"><label>Grasa por 100</label><input id="i-grasa" type="number" step="0.01"/></div></div>
+    <div class="actions"><button class="btn btn-soft" onclick="cerrarModalIng()">Cancelar</button><button class="btn btn-primary" onclick="guardarIngrediente()">💾 Guardar</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="modalPlatoRapido">
+  <div class="modal">
+    <h2>Agregar plato rápido</h2>
+    <div class="sub" id="mpr-cat"></div>
+    <div class="field"><label>Nombre *</label><input id="mpr-nombre" type="text"/></div>
+    <div class="grid2"><div class="field"><label>Calorías</label><input id="mpr-cal" type="number" step="0.1"/></div><div class="field"><label>Proteína</label><input id="mpr-prot" type="number" step="0.1"/></div></div>
+    <div class="grid2"><div class="field"><label>Carbohidratos</label><input id="mpr-carb" type="number" step="0.1"/></div><div class="field"><label>Grasa</label><input id="mpr-gt" type="number" step="0.1"/></div></div>
+    <div class="actions"><button class="btn btn-soft" onclick="cerrarPlatoRapido()">Cancelar</button><button class="btn btn-primary" onclick="crearPlatoRapido()">💾 Guardar</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="modalCuenta">
+  <div class="modal">
+    <h2>👤 Mi cuenta</h2>
+    <div class="sub">Información personal y cambio de contraseña</div>
+    <div class="field"><label>Usuario</label><div id="mc-username" style="font-weight:600;color:var(--brand-3)"></div></div>
+    <div class="field"><label>Nombre completo</label><div id="mc-nombre"></div></div>
+    <div class="field"><label>Email</label><div id="mc-email"></div></div>
+    <div class="field"><label>Perfil</label><div id="mc-perfil"></div></div>
+    <div class="field"><label>Casino</label><div id="mc-casino"></div></div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+    <h3 style="font-size:14px;color:var(--brand-3);margin-bottom:12px">🔒 Cambiar contraseña</h3>
+    <div class="field"><label>Contraseña actual</label><input id="mc-actual" type="password"/></div>
+    <div class="field"><label>Nueva contraseña (mín 6)</label><input id="mc-nuevo" type="password"/></div>
+    <div class="field"><label>Confirmar nueva</label><input id="mc-confirmar" type="password"/></div>
+    <div class="actions"><button class="btn btn-soft" onclick="cerrarModalCuenta()">Cancelar</button><button class="btn btn-primary" onclick="guardarPassword()">💾 Cambiar contraseña</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="modalUsuario">
+  <div class="modal">
+    <h2 id="modalUsuarioTitle">Nuevo usuario</h2>
+    <div class="sub">Completa los datos del usuario</div>
+    <div class="field"><label>Username *</label><input id="m-user-username" type="text" placeholder="ej: nutri.jose" autocomplete="off"/></div>
+    <div class="field"><label>Nombre completo *</label><input id="m-user-nombre" type="text"/></div>
+    <div class="field"><label>Email</label><input id="m-user-email" type="email"/></div>
+    <div class="grid2"><div class="field"><label>Perfil *</label><select id="m-user-perfil"></select></div><div class="field"><label>Casino</label><select id="m-user-casino"></select></div></div>
+    <div class="field" id="m-user-pass-group"><label>Contraseña inicial * (mín 6)</label><input id="m-user-password" type="password" autocomplete="new-password"/></div>
+    <div class="actions"><button class="btn btn-soft" onclick="cerrarModalUsuario()">Cancelar</button><button class="btn btn-primary" onclick="guardarUsuarioForm()">💾 Guardar</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="modalScanner">
+  <div class="modal" style="width:600px;max-width:96vw">
+    <h2>📷 Escanear código de barras</h2>
+    <div class="sub">Apunta la cámara al código del producto</div>
+    <div id="scanner-viewport"><div class="scanner-frame"></div></div>
+    <div class="actions"><button class="btn btn-danger" onclick="detenerScanner()">Cerrar scanner</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="modalIngreso">
+  <div class="modal" style="width:600px;max-width:96vw">
+    <h2>📥 Nuevo ingreso de mercadería</h2>
+    <div class="sub">Escanea el código o busca el producto manualmente</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button type="button" class="btn btn-primary" onclick="escanearIngreso()">📷 Escanear cámara</button>
+      <button type="button" class="btn btn-soft" onclick="escanearManualIngreso()">🔢 Código manual</button>
+      <button type="button" class="btn btn-soft" onclick="buscarIngredienteManual()">🔍 Buscar catálogo</button>
+    </div>
+    <input type="hidden" id="ing-ingrediente-id"/>
+    <div class="field"><label>Producto</label><input id="ing-nombre" type="text" disabled/></div>
+    <div class="grid2">
+      <div class="field"><label>Marca</label><input id="ing-marca" type="text" disabled/></div>
+      <div class="field"><label>Bodega *</label><select id="ing-bodega"></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Cantidad *</label><input id="ing-cantidad" type="number" step="0.01" min="0"/></div>
+      <div class="field"><label>Unidad</label>
+        <select id="ing-unidad">
+          <option value="gr">gr</option>
+          <option value="kg">kg</option>
+          <option value="ml">ml</option>
+          <option value="lt">lt</option>
+          <option value="und">und</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Vencimiento</label><input id="ing-vencimiento" type="date"/></div>
+      <div class="field"><label>N° documento</label><input id="ing-documento" type="text" placeholder="Factura/Guía"/></div>
+    </div>
+    <div class="field"><label>Proveedor</label><input id="ing-proveedor" type="text"/></div>
+    <div class="field"><label>Notas</label><textarea id="ing-notas" rows="2"></textarea></div>
+    <div class="actions">
+      <button class="btn btn-soft" onclick="cerrarModalIngreso()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarIngreso()">💾 Registrar ingreso</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="modalEgreso">
+  <div class="modal">
+    <h2>📤 Registrar egreso</h2>
+    <div class="sub" id="eg-producto"></div>
+    <div style="background:#F3F7F4;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:13px;color:#3D5449" id="eg-stock"></div>
+    <div class="grid2">
+      <div class="field"><label>Cantidad *</label><input id="eg-cantidad" type="number" step="0.01" min="0"/></div>
+      <div class="field"><label>Motivo *</label>
+        <select id="eg-motivo">
+          <option value="CONSUMO">Consumo</option>
+          <option value="MERMA">Merma</option>
+          <option value="VENCIDO">Vencido</option>
+          <option value="OTROS">Otros</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Notas</label><textarea id="eg-notas" rows="2"></textarea></div>
+    <div class="actions">
+      <button class="btn btn-soft" onclick="cerrarModalEgreso()">Cancelar</button>
+      <button class="btn btn-danger" onclick="guardarEgreso()">📤 Registrar egreso</button>
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<button class="pwa-install-btn" id="pwa-install-btn" onclick="instalarPWA()">📲 Instalar app</button>
+<footer>MVOF · Gestión Alimentaria · v3.0 · Powered by Supabase</footer>
+<script defer src="assets/js/config.js?v=3.0.0"></script>
+<script defer src="assets/js/auth.js?v=3.0.0"></script>
+<script defer src="assets/js/permissions.js?v=3.0.0"></script>
+<script defer src="assets/js/app.js?v=3.0.0"></script>
+<script defer src="assets/js/minutas.js?v=3.0.0"></script>
+<script defer src="assets/js/recetas.js?v=3.0.0"></script>
+<script defer src="assets/js/dashboard.js?v=3.0.0"></script>
+<script defer src="assets/js/compras.js?v=3.0.0"></script>
+<script defer src="assets/js/usuarios.js?v=3.0.0"></script>
+<script defer src="assets/js/auditoria.js?v=3.0.0"></script>
+<script defer src="assets/js/barcode.js?v=3.0.0"></script>
+<script defer src="assets/js/scanner.js?v=3.0.0"></script>
+<script defer src="assets/js/inventario.js?v=3.0.0"></script>
+<script defer src="assets/js/pwa.js?v=3.0.0"></script>
+</body>
+</html>

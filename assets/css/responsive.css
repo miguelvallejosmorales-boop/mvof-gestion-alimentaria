@@ -1,0 +1,49 @@
+/* ============================================================
+   MVOF · Responsive + Safe Area (iOS)
+   ============================================================ */
+@media (max-width:1024px){
+  main{padding:20px 20px 70px}
+  .card-pad{padding:20px}
+}
+@media (max-width:768px){
+  header{padding:0 14px}
+  header .brand-text small{display:none}
+  .hdr-tools .btn{padding:6px 10px;font-size:12px}
+  main{padding:16px 14px 84px}
+  .toolbar{flex-direction:column;align-items:stretch;gap:8px;padding:12px}
+  .toolbar>div{width:100%}
+  .toolbar input,.toolbar select{width:100%;min-width:0;font-size:16px}
+  .toolbar .btn{width:100%;justify-content:center}
+  .toolbar .stats{margin-left:0;justify-content:center}
+  .panel{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .panel table{min-width:620px}
+  .cards-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .card.metric .value{font-size:22px}
+  #mod-dashboard [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
+  .modal{padding:20px}
+  .grid2{grid-template-columns:1fr}
+  .modal .actions{flex-direction:column-reverse}
+  .modal .actions .btn{width:100%}
+  .drawer{width:100%;max-width:100%}
+  .drawer-footer{flex-direction:column-reverse}
+  .drawer-footer .btn{width:100%}
+  .ing-add-row{grid-template-columns:1fr}
+  .tabs{width:100%;overflow-x:auto}
+}
+@media (max-width:480px){
+  .cards-grid{grid-template-columns:1fr 1fr}
+  .card.metric .value{font-size:20px}
+}
+/* Táctil: iOS anti-zoom */
+@media (hover:none) and (pointer:coarse){
+  input,select,textarea{font-size:16px !important;min-height:38px}
+  .btn{min-height:36px}
+}
+/* Safe area (notch / dynamic island) */
+@supports (padding:env(safe-area-inset-top)){
+  header{padding-top:env(safe-area-inset-top);height:calc(var(--header-h) + env(safe-area-inset-top))}
+  main{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));
+    padding-bottom:max(70px,calc(env(safe-area-inset-bottom) + 40px))}
+  .pwa-install-btn{bottom:max(16px,calc(env(safe-area-inset-bottom) + 12px))}
+  .toast{bottom:max(20px,calc(env(safe-area-inset-bottom) + 16px))}
+}
