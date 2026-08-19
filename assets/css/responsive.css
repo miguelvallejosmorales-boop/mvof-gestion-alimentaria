@@ -47,3 +47,18 @@
   .pwa-install-btn{bottom:max(16px,calc(env(safe-area-inset-bottom) + 12px))}
   .toast{bottom:max(20px,calc(env(safe-area-inset-bottom) + 16px))}
 }
+/* Tabla de ingredientes: scroll horizontal para ver todas las columnas */
+#sub-ingredientes .panel{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#sub-ingredientes table{
+  min-width:1080px;
+}
+/* Primera columna (Nombre) fija al hacer scroll horizontal */
+#sub-ingredientes thead th:first-child,
+#sub-ingredientes tbody td:first-child{
+  position:sticky;left:0;background:var(--card);z-index:2;
+  box-shadow:2px 0 6px rgba(20,28,24,.04);
+}
+#sub-ingredientes thead th:first-child{background:var(--card-2)}
