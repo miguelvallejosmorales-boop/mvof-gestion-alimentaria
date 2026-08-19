@@ -191,10 +191,15 @@ function renderIngredientes(){
   if (fSrc) lista=lista.filter(i=>((i.fuente||'MANUAL').toString().toUpperCase()===fSrc));
   const tb=$("tbl-ing"); if(!tb) return;
   const puedeEditar=tienePermiso("ingredientes.editar"), puedeEliminar=tienePermiso("ingredientes.eliminar");
+
   if (!lista.length){
-    tb.innerHTML='<tr><td colspan="8" class="empty">Sin ingredientes.</td></tr>';
+    tb.innerHTML='<tr><td colspan="11" class="empty">Sin ingredientes.</td></tr>';
   } else {
     tb.innerHTML=lista.map(i=>{
+      const sodio = (+i.sodio_100 || 0);
+      const fibra = (+i.fibra_100 || 0);
+      const sodioColor = sodio > 500 ? 'color:#BC4B45;font-weight:650' : '';
+      const fibraColor = fibra >= 5 ? 'color:#3D5449;font-weight:650' : '';
       let acciones="";
       if (puedeEditar)   acciones+=`<button class="btn btn-soft btn-mini" onclick="editarIng(${i.ingrediente_id})">✏️</button>`;
       if (puedeEliminar) acciones+=`<button class="btn btn-danger btn-mini" onclick="eliminarIng(${i.ingrediente_id})">🗑️</button>`;
@@ -203,14 +208,18 @@ function renderIngredientes(){
         <td><b>${i.nombre}</b></td>
         <td>${badgeFuente(i.fuente)}</td>
         <td class="nutri">${i.unidad}</td>
-        <td class="nutri">${(+i.kcal_100).toFixed(2)}</td>
-        <td class="nutri">${(+i.prot_100).toFixed(2)}</td>
-        <td class="nutri">${(+i.carb_100).toFixed(2)}</td>
-        <td class="nutri">${(+i.grasa_100).toFixed(2)}</td>
+        <td class="nutri">${(+i.kcal_100 || 0).toFixed(2)}</td>
+        <td class="nutri">${(+i.prot_100 || 0).toFixed(2)}</td>
+        <td class="nutri">${(+i.carb_100 || 0).toFixed(2)}</td>
+        <td class="nutri">${(+i.grasa_100 || 0).toFixed(2)}</td>
+        <td class="nutri" style="${fibraColor}">${fibra.toFixed(2)}</td>
+        <td class="nutri" style="${sodioColor}">${sodio.toFixed(2)}</td>
+        <td class="nutri">${(+i.potasio_100 || 0).toFixed(2)}</td>
         <td><div class="acciones">${acciones}</div></td>
       </tr>`;
     }).join("");
   }
+
   const st=$("statsIng");
   if (st){
     const nInta =lista.filter(i=>(i.fuente||'').toString().toUpperCase()==='INTA').length;
@@ -219,7 +228,6 @@ function renderIngredientes(){
     st.textContent = `🥕 ${lista.length} · 🌿 ${nInta} · ✅ ${nMatch} · ✍️ ${nMan}`;
   }
 }
-
 function abrirModalIng(){
   if (!tienePermiso("ingredientes.crear")){ toast("Sin permiso","err"); return; }
   EDIT_ING=null;
